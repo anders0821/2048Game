@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="2048-game",
+    name="2048Game",
     version="1.0.0",
     author="2048 Game Team",
     author_email="dev@2048game.local",

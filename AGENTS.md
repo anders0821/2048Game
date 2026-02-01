@@ -6,24 +6,30 @@ This file contains guidelines for AI agents working on this PySide6-based 2048 g
 
 ### Running Tests
 ```bash
-# Run all tests (smoke + unit + quality checks)
-python run_tests.py
+# Using virtual environment (recommended)
+C:\Documents\Develop\venv\hswl312\Scripts\python.exe -m pytest tests/ -v
 
-# Run only smoke tests
-python smoke_test.py
-
-# Run only unit tests
-pytest tests/ -v
+# Run all tests
+python -m pytest tests/ -v
 
 # Run a single specific test file
-pytest tests/test_main.py -v
+python -m pytest tests/test_game.py -v
+
+# Run a single specific test class
+python -m pytest tests/test_game.py::TestGame2048 -v
 
 # Run a single specific test function
-pytest tests/test_main.py::test_main -v
+python -m pytest tests/test_game.py::TestGame2048::test_initial_score -v
+
+# Run with coverage
+python -m pytest tests/ --cov=src --cov-report=html
 ```
 
 ### Code Quality & Linting
 ```bash
+# Using virtual environment (recommended)
+C:\Documents\Develop\venv\hswl312\Scripts\python.exe -m black src/ tests/ --line-length 88
+
 # Format code with Black (line length: 88)
 black src/ tests/ --line-length 88
 
@@ -51,6 +57,9 @@ pyinstaller --name="2048Game" --windowed --onefile --clean src/main.py
 
 ### Running the Application
 ```bash
+# Using virtual environment (recommended)
+C:\Documents\Develop\venv\hswl312\Scripts\python.exe src/main.py
+
 # Run the game directly
 python src/main.py
 
@@ -103,7 +112,7 @@ python -m src.main
 - Use imperative mood (e.g., "Run smoke test" not "Runs smoke test")
 
 ### Qt/PySide6 Specifics
-- Use `Qt.Key.Key_Left` (not `Qt.Key_Left`) for key enums
+- Use `Qt.Key_Left` (not `Qt.Key.Key_Left`) for key enums
 - Always call `app.exec()` not `exec_()` (Python 3 only)
 - Use type hints for QWidget parameters: `parent: Optional[QWidget] = None`
 - Connect signals with modern syntax: `obj.signal.connect(slot)`
@@ -112,8 +121,8 @@ python -m src.main
 - Tests are in `tests/` directory
 - Test files named `test_*.py`
 - Test functions named `test_*`
-- Use pytest for unit tests, custom smoke tests for integration
-- Smoke tests verify UI components exist and respond to input
+- Use pytest for unit tests
+- Test classes should group related functionality (e.g., `TestGame2048`, `TestTileMerging`)
 
 ### Project Structure
 ```
@@ -122,7 +131,12 @@ python -m src.main
   - main.py           # Application entry point
   - main_window.py    # Main window and UI
   - game2048.py       # Game logic
+  - widgets/          # UI components
+    - __init__.py
+    - tile_widget.py
+    - game_board.py
 - tests/              # Unit tests
+  - test_game.py      # Game logic tests
 - package_game.py     # Build script
 - pyproject.toml      # Tool configurations
 ```

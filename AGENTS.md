@@ -153,7 +153,7 @@ Before committing, ensure:
 2. ✅ Imports sorted with `isort src/ tests/`
 3. ✅ Type checks pass with `mypy src/`
 4. ✅ Tests pass with `pytest tests/ -v`
-5. ✅ Smoke test passes with `python smoke_test.py`
+5. ✅ All tests pass with `pytest tests/ -v`
 
 ### Common Patterns
 - Game logic is separate from UI (MVC pattern)

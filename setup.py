@@ -4,25 +4,22 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="your-project-name",
+    name="2048-game",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="A brief description of your project",
+    author="2048 Game Team",
+    author_email="dev@2048game.local",
+    description="A 2048 puzzle game implemented with PySide6 featuring smooth animations",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Topic :: Games/Entertainment :: Puzzle Games",
     ],
     python_requires=">=3.12",
     install_requires=[

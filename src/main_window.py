@@ -111,10 +111,7 @@ class MainWindow(QMainWindow):
 
     def _build_footer(self, layout: QVBoxLayout) -> None:
         """Build footer section with instructions."""
-        instructions = QLabel(
-            "Use arrow keys to play\n"
-            "Press 'N' for new game, 'R' to restart"
-        )
+        instructions = QLabel("Use arrow keys to play")
         instructions.setFont(QFont("Arial", 11))
         instructions.setStyleSheet(f"color: {self.TEXT_COLOR};")
         instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)

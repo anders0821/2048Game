@@ -1,11 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+
 a = Analysis(
     ['src\\main.py'],
-    pathex=['.', 'src'],
+    pathex=['src'],
     binaries=[],
-    datas=[('src', 'src')],
-    hiddenimports=['main_window'],
+    datas=[],
+    hiddenimports=['common', 'game2048', 'main_window', 'tile_widget', 'game_board_widget'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

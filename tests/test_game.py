@@ -330,7 +330,7 @@ class TestGameState:
         """Test that a new tile is added after successful move."""
         game = Game2048()
         game.board = [
-            [2, 0, 0, 0],
+            [2, 2, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0]
@@ -338,7 +338,8 @@ class TestGameState:
         initial_count = sum(1 for row in game.board for val in row if val != 0)
         game.move("left")
         new_count = sum(1 for row in game.board for val in row if val != 0)
-        assert new_count == initial_count + 1
+        # After merge: [4, 0, 0, 0] + new tile = 2 non-zero tiles
+        assert new_count == initial_count
 
     def test_no_new_tile_on_invalid_move(self):
         """Test no new tile added when move doesn't change board."""

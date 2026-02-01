@@ -211,7 +211,7 @@ class Game2048:
     
     def get_board(self) -> List[List[int]]:
         """Get current board state."""
-        return self.board.copy()
+        return [row[:] for row in self.board]
     
     def get_score(self) -> int:
         """Get current score."""

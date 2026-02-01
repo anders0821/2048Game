@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout, QLabel, QPushButton, QGridLayout,
     QMessageBox, QFrame
 )
-from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QRect, QPoint, QTimer
+from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QRect, QPoint, QTimer, QParallelAnimationGroup, QSequentialAnimationGroup
 from PySide6.QtGui import QFont, QPalette, QColor
 from typing import Optional, List, Tuple
 
@@ -33,26 +33,51 @@ class TileWidget(QLabel):
         self.scale_animation = QPropertyAnimation(self, b"geometry")
         self.scale_animation.setDuration(200)
         self.scale_animation.setEasingCurve(QEasingCurve.Type.OutBack)
+        
+        # Merge specific animations
+        self.merge_scale_animation = QPropertyAnimation(self, b"geometry")
+        self.merge_scale_animation.setDuration(300)
+        self.merge_scale_animation.setEasingCurve(QEasingCurve.Type.OutElastic)
+        
+        # Color transition animation
+        self.color_animation = QPropertyAnimation(self, b"stylesheet")
+        self.color_animation.setDuration(250)
+        self.color_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
     
     def update_value(self, value: int, animate: bool = False) -> None:
         """Update tile value and appearance."""
-        if self.value != value and value != 0:
-            self.is_merged = True
+        # Detect merge before updating value
+        old_value = self.value
+        is_merge = (old_value != 0 and value != 0 and value > old_value)
+        
+        print(f"🔍 Tile update: {old_value} -> {value}, animate: {animate}, is_merge: {is_merge}")
         
         self.value = value
         self.setText(str(value) if value != 0 else "")
         self.setStyleSheet(self._get_tile_style(value))
         
         # Animate appearance of new tiles
-        if animate and value != 0:
+        if animate and self.value != 0 and self.value in [2, 4]:
+            print(f"🎱 New tile animation: {self.value}")
             self.animate_appearance()
-        # Animate merged tiles
-        elif animate and self.is_merged:
+        # Enhanced merge animation
+        elif animate and is_merge:
+            print(f"🔥 Merge animation triggered: {old_value} -> {value}")
             self.animate_merge()
+        else:
+            print(f"📝 No animation: value={value}, animate={animate}, old_value={old_value}")
     
     def animate_appearance(self) -> None:
         """Animate new tile appearance."""
         current_geo = self.geometry()
+        
+        # Ensure correct position before animation
+        row, col = self._find_my_position()
+        correct_pos = self.parent()._get_tile_position(row, col)
+        if current_geo.x() != correct_pos.x() or current_geo.y() != correct_pos.y():
+            current_geo.moveTo(correct_pos.x(), correct_pos.y())
+            self.setGeometry(current_geo)
+        
         center = current_geo.center()
         small_size = int(current_geo.width() * 0.6)
         
@@ -63,24 +88,55 @@ class TileWidget(QLabel):
             small_size
         )
         
+        # Reset animation
+        self.scale_animation.stop()
         self.scale_animation.setStartValue(start_geo)
         self.scale_animation.setEndValue(current_geo)
         self.scale_animation.start()
     
+    def _find_my_position(self) -> Tuple[int, int]:
+        """Find this tile's grid position."""
+        if hasattr(self.parent(), 'tiles'):
+            tiles = self.parent().tiles
+            for row in range(len(tiles)):
+                for col in range(len(tiles[row])):
+                    if tiles[row][col] is self:
+                        return row, col
+        return 0, 0  # Fallback
+    
     def animate_merge(self) -> None:
-        """Animate merged tile."""
+        """Animate merged tile with enhanced effects."""
+        # Ensure correct position before animation
+        row, col = self._find_my_position()
+        correct_pos = self.parent()._get_tile_position(row, col)
         current_geo = self.geometry()
+        
+        if current_geo.x() != correct_pos.x() or current_geo.y() != correct_pos.y():
+            current_geo.moveTo(correct_pos.x(), correct_pos.y())
+            self.setGeometry(current_geo)
+        
         center = current_geo.center()
-        large_size = int(current_geo.width() * 1.1)
+        
+        # Multiple scale stages for better effect
+        original_size = current_geo.width()
+        medium_size = int(original_size * 1.15)
+        large_size = int(original_size * 1.25)
         
         start_geo = QRect(
-            center.x() - current_geo.width() // 2,
-            center.y() - current_geo.height() // 2,
-            current_geo.width(),
-            current_geo.height()
+            center.x() - original_size // 2,
+            center.y() - original_size // 2,
+            original_size,
+            original_size
         )
         
-        mid_geo = QRect(
+        medium_geo = QRect(
+            center.x() - medium_size // 2,
+            center.y() - medium_size // 2,
+            medium_size,
+            medium_size
+        )
+        
+        large_geo = QRect(
             center.x() - large_size // 2,
             center.y() - large_size // 2,
             large_size,
@@ -89,39 +145,117 @@ class TileWidget(QLabel):
         
         end_geo = current_geo
         
-        # Create a bounce effect
-        self.scale_animation.setDuration(150)
-        self.scale_animation.setStartValue(start_geo)
-        self.scale_animation.setEndValue(mid_geo)
-        self.scale_animation.start()
+        # Create sequential animation group
+        merge_group = QSequentialAnimationGroup()
         
-        # Animate back to normal size after first animation
-        self.scale_animation.finished.connect(
-            lambda: self._animate_merge_back(end_geo)
-        )
+        # First expansion
+        expand1 = QPropertyAnimation(self, b"geometry")
+        expand1.setDuration(120)
+        expand1.setEasingCurve(QEasingCurve.Type.OutQuad)
+        expand1.setStartValue(start_geo)
+        expand1.setEndValue(medium_geo)
+        
+        # Second expansion with elastic effect
+        expand2 = QPropertyAnimation(self, b"geometry")
+        expand2.setDuration(150)
+        expand2.setEasingCurve(QEasingCurve.Type.OutElastic)
+        expand2.setStartValue(medium_geo)
+        expand2.setEndValue(large_geo)
+        
+        # Contraction with bounce
+        contract = QPropertyAnimation(self, b"geometry")
+        contract.setDuration(200)
+        contract.setEasingCurve(QEasingCurve.Type.InOutBack)
+        contract.setStartValue(large_geo)
+        contract.setEndValue(end_geo)
+        
+        merge_group.addAnimation(expand1)
+        merge_group.addAnimation(expand2)
+        merge_group.addAnimation(contract)
+        
+        # Animate color change
+        self._animate_color_transition()
+        
+        # Start animations
+        merge_group.start()
+        
+        # Flash effect on completion - ensure final position
+        merge_group.finished.connect(lambda: self._ensure_final_position(end_geo))
+        merge_group.finished.connect(self._flash_effect)
     
-    def _animate_merge_back(self, end_geo: QRect) -> None:
-        """Second part of merge animation."""
-        self.scale_animation.disconnect()
-        self.scale_animation.setDuration(100)
-        self.scale_animation.setStartValue(self.geometry())
-        self.scale_animation.setEndValue(end_geo)
-        self.scale_animation.start()
+    def _animate_color_transition(self) -> None:
+        """Animate color transition during merge."""
+        original_style = self.styleSheet()
+        
+        # Create highlight style
+        highlight_style = original_style.replace("background-color:", "background-color: #FFD700;")
+        
+        # Animate to highlight and back
+        self.color_animation.setStartValue(original_style)
+        self.color_animation.setEndValue(highlight_style)
+        self.color_animation.start()
+        
+        # Animate back to original color
+        QTimer.singleShot(100, lambda: self._animate_color_back(original_style))
+    
+    def _animate_color_back(self, original_style: str) -> None:
+        """Animate back to original color."""
+        back_animation = QPropertyAnimation(self, b"stylesheet")
+        back_animation.setDuration(150)
+        back_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        back_animation.setStartValue(self.styleSheet())
+        back_animation.setEndValue(original_style)
+        back_animation.start()
+    
+    def _flash_effect(self) -> None:
+        """Create a flash effect after merge animation."""
+        # Create temporary overlay effect
+        original_style = self.styleSheet()
+        
+        # Add glow effect
+        glow_style = original_style.replace("}", """
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            border: 2px solid #FFD700;
+        }""")
+        
+        self.setStyleSheet(glow_style)
+        
+        # Remove glow effect after short delay
+        QTimer.singleShot(200, lambda: self.setStyleSheet(original_style))
     
     def animate_move_to(self, target_pos: QPoint) -> None:
         """Animate tile movement to target position."""
+        # Ensure we get the correct current position
         current_geo = self.geometry()
         target_geo = QRect(
             target_pos.x(), target_pos.y(),
             current_geo.width(), current_geo.height()
         )
         
+        print(f"🎯 Moving tile from ({current_geo.x()}, {current_geo.y()}) to ({target_pos.x()}, {target_pos.y()})")
+        
+        # Stop any existing animation
+        self.pos_animation.stop()
+        
+        # Set animation properties
         self.pos_animation.setStartValue(current_geo)
         self.pos_animation.setEndValue(target_geo)
+        
+        # Start animation
         self.pos_animation.start()
+        
+        # Ensure final position is correct after animation
+        self.pos_animation.finished.connect(
+            lambda: self._ensure_final_position(target_geo)
+        )
+    
+    def _ensure_final_position(self, target_geo: QRect) -> None:
+        """Ensure tile ends up at exactly the right position."""
+        self.pos_animation.finished.disconnect()
+        self.setGeometry(target_geo)
     
     def _get_tile_style(self, value: int) -> str:
-        """Get tile style based on value."""
+        """Get tile style based on value with enhanced effects."""
         colors = {
             0: "#cdc1b4",
             2: "#eee4da",
@@ -157,6 +291,11 @@ class TileWidget(QLabel):
         
         font_size = 48 if value < 100 else 36 if value < 1000 else 28
         
+        # Enhanced shadow for better merge effect visibility
+        shadow_style = """
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        """ if value > 0 else ""
+        
         return f"""
             QLabel {{
                 background-color: {bg_color};
@@ -164,6 +303,8 @@ class TileWidget(QLabel):
                 border-radius: 6px;
                 font-size: {font_size}px;
                 font-weight: bold;
+                {shadow_style}
+                transition: all 0.3s ease;
             }}
         """
 
@@ -217,6 +358,10 @@ class GameBoardWidget(QFrame):
         """Update board without animation."""
         for row in range(self.game.size):
             for col in range(self.game.size):
+                # Reset tile position to ensure correct placement
+                tile = self.tiles[row][col]
+                expected_pos = self._get_tile_position(row, col)
+                tile.move(expected_pos.x(), expected_pos.y())
                 self.tiles[row][col].update_value(board[row][col])
     
     def _animate_board_update(self, new_board: List[List[int]]) -> None:
@@ -224,6 +369,7 @@ class GameBoardWidget(QFrame):
         old_board = self.previous_board or [[0] * self.game.size for _ in range(self.game.size)]
         moved_tiles = {}
         new_tiles = []
+        merge_tiles = []
         
         # Track tile movements and new tiles
         for new_row in range(self.game.size):
@@ -233,21 +379,42 @@ class GameBoardWidget(QFrame):
                 
                 if new_value != old_value:
                     if new_value != 0 and old_value == 0:
-                        # New tile appeared
-                        new_tiles.append((new_row, new_col))
+                        # Check if this is a new tile (2 or 4) or a merge result
+                        if new_value in [2, 4]:
+                            # New tile appeared
+                            new_tiles.append((new_row, new_col))
+                        else:
+                            # This is a merge result (value > 4)
+                            merge_tiles.append((new_row, new_col))
                     elif new_value != 0:
                         # Tile moved or merged - find its source
                         source = self._find_tile_source(new_value, old_board)
                         if source:
                             moved_tiles[(new_row, new_col)] = (source, new_value)
         
-        # First, update all tiles to their new values but hide new ones
+        # First, update all tiles to their new values
         for row in range(self.game.size):
             for col in range(self.game.size):
+                old_value = old_board[row][col]
+                new_value = new_board[row][col]
+                
+                # Determine animation type
                 is_new = (row, col) in new_tiles
-                self.tiles[row][col].update_value(new_board[row][col], animate=is_new)
-                if is_new:
+                is_merge = (row, col) in merge_tiles
+                
+                print(f"📍 Cell ({row},{col}): old={old_value}, new={new_value}, is_new={is_new}, is_merge={is_merge}")
+                
+                # Update tile with appropriate animation - always animate for testing
+                if is_merge:
+                    print(f"🔥 Merge detected at ({row}, {col}): {old_value} -> {new_value}")
+                    self.tiles[row][col].update_value(new_board[row][col], animate=True)
+                elif is_new:
+                    print(f"🎱 New tile at ({row}, {col}): {new_value}")
+                    self.tiles[row][col].update_value(new_board[row][col], animate=True)
                     self.tiles[row][col].hide()
+                else:
+                    # For testing, always animate to see what happens
+                    self.tiles[row][col].update_value(new_board[row][col], animate=True)
         
         # Animate movements
         for (new_row, new_col), ((old_row, old_col), value) in moved_tiles.items():
@@ -258,7 +425,8 @@ class GameBoardWidget(QFrame):
                 self.tiles[new_row][new_col].animate_move_to(target_pos)
         
         # Show and animate new tiles after a short delay
-        QTimer.singleShot(50, lambda: self._show_new_tiles(new_tiles))
+        if new_tiles:
+            QTimer.singleShot(50, lambda: self._show_new_tiles(new_tiles))
     
     def _find_tile_source(self, value: int, old_board: List[List[int]]) -> Optional[Tuple[int, int]]:
         """Find the source position of a tile value in the old board."""
@@ -270,6 +438,16 @@ class GameBoardWidget(QFrame):
     
     def _get_tile_position(self, row: int, col: int) -> QPoint:
         """Get the screen position for a tile at given grid position."""
+        # Calculate position based on grid layout to avoid cumulative errors
+        if hasattr(self, 'tiles') and len(self.tiles) > row and len(self.tiles[row]) > col:
+            tile = self.tiles[row][col]
+            # Get the layout's intended position
+            layout = self.layout()
+            if layout:
+                rect = layout.cellRect(row, col)
+                return QPoint(rect.x(), rect.y())
+        
+        # Fallback to tile's current position
         tile = self.tiles[row][col]
         return QPoint(tile.x(), tile.y())
     

@@ -58,44 +58,118 @@ class Game2048:
         
         return moved
     
-    def _rotate_board(self) -> None:
-        """Rotate the board 90 degrees clockwise."""
-        self.board = [[self.board[self.size - 1 - row][col] 
-                      for row in range(self.size)] 
-                     for col in range(self.size)]
-    
+    def _move_right(self) -> bool:
+        """Move and merge tiles to the right."""
+        moved = False
+
+        for row in range(self.size):
+            # Extract non-zero tiles from right
+            tiles = [tile for tile in self.board[row] if tile != 0]
+
+            # Merge tiles from the right
+            merged_tiles = []
+            i = len(tiles) - 1
+            while i >= 0:
+                if i - 1 >= 0 and tiles[i] == tiles[i - 1]:
+                    merged_tiles.insert(0, tiles[i] * 2)
+                    self.score += tiles[i] * 2
+                    i -= 2
+                else:
+                    merged_tiles.insert(0, tiles[i])
+                    i -= 1
+
+            # Pad with zeros on the left
+            new_row = [0] * (self.size - len(merged_tiles)) + merged_tiles
+
+            # Check if row changed
+            if new_row != self.board[row]:
+                moved = True
+                self.board[row] = new_row
+
+        return moved
+
+    def _move_up(self) -> bool:
+        """Move and merge tiles up."""
+        moved = False
+
+        for col in range(self.size):
+            # Extract non-zero tiles from this column
+            tiles = [self.board[row][col] for row in range(self.size) if self.board[row][col] != 0]
+
+            # Merge tiles
+            merged_tiles = []
+            i = 0
+            while i < len(tiles):
+                if i + 1 < len(tiles) and tiles[i] == tiles[i + 1]:
+                    merged_tiles.append(tiles[i] * 2)
+                    self.score += tiles[i] * 2
+                    i += 2
+                else:
+                    merged_tiles.append(tiles[i])
+                    i += 1
+
+            # Pad with zeros on bottom
+            new_col = merged_tiles + [0] * (self.size - len(merged_tiles))
+
+            # Check if column changed
+            for row in range(self.size):
+                if self.board[row][col] != new_col[row]:
+                    moved = True
+                    self.board[row][col] = new_col[row]
+
+        return moved
+
+    def _move_down(self) -> bool:
+        """Move and merge tiles down."""
+        moved = False
+
+        for col in range(self.size):
+            # Extract non-zero tiles from this column
+            tiles = [self.board[row][col] for row in range(self.size) if self.board[row][col] != 0]
+
+            # Merge tiles from bottom
+            merged_tiles = []
+            i = len(tiles) - 1
+            while i >= 0:
+                if i - 1 >= 0 and tiles[i] == tiles[i - 1]:
+                    merged_tiles.insert(0, tiles[i] * 2)
+                    self.score += tiles[i] * 2
+                    i -= 2
+                else:
+                    merged_tiles.insert(0, tiles[i])
+                    i -= 1
+
+            # Pad with zeros on top
+            new_col = [0] * (self.size - len(merged_tiles)) + merged_tiles
+
+            # Check if column changed
+            for row in range(self.size):
+                if self.board[row][col] != new_col[row]:
+                    moved = True
+                    self.board[row][col] = new_col[row]
+
+        return moved
+
     def move(self, direction: str) -> bool:
         """Move tiles in the specified direction."""
         if self.game_over or self.won:
             return False
-        
+
         self.moved = False
-        
+
         if direction == "left":
             self.moved = self._move_left()
         elif direction == "right":
-            self._rotate_board()
-            self._rotate_board()
-            self.moved = self._move_left()
-            self._rotate_board()
-            self._rotate_board()
+            self.moved = self._move_right()
         elif direction == "up":
-            self._rotate_board()
-            self._rotate_board()
-            self._rotate_board()
-            self.moved = self._move_left()
-            self._rotate_board()
+            self.moved = self._move_up()
         elif direction == "down":
-            self._rotate_board()
-            self.moved = self._move_left()
-            self._rotate_board()
-            self._rotate_board()
-            self._rotate_board()
-        
+            self.moved = self._move_down()
+
         if self.moved:
             self._add_random_tile()
             self._check_game_state()
-        
+
         return self.moved
     
     def _check_game_state(self) -> None:

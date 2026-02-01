@@ -1,23 +1,19 @@
+"""Main entry point for the 2048 game."""
 import sys
 from PySide6.QtWidgets import QApplication
 
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__)))
 from main_window import MainWindow
 
 
 def main() -> None:
     """Main entry point for the 2048 game application."""
     app = QApplication(sys.argv)
-    
-    # Create and show the main window
+
     window = MainWindow()
     window.show()
     window.activateWindow()
     window.raise_()
-    
-    # Run the application
+
     sys.exit(app.exec())
 
 

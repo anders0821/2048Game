@@ -2,13 +2,14 @@
 
 This file contains guidelines for AI agents working on this PySide6-based 2048 game repository.
 
+## Using virtual environment
+To ensure smooth execution, use absolute paths for all subsequent Python commands:
+/c/Documents/Develop/venv/hswl312/Scripts/python.exe
+
 ## Build / Lint / Test Commands
 
 ### Running Tests
 ```bash
-# Using virtual environment (recommended)
-/c/Documents/Develop/venv/hswl312/Scripts/python.exe -m pytest tests/ -v
-
 # Run all tests
 python -m pytest tests/ -v
 
@@ -28,7 +29,7 @@ python -m pytest tests/ --cov=src --cov-report=html
 ### Code Quality & Linting
 ```bash
 # Using virtual environment (recommended)
-/c/Documents/Develop/venv/hswl312/Scripts/python.exe -m black src/ tests/ --line-length 88
+python -m black src/ tests/ --line-length 88
 
 # Format code with Black (line length: 88)
 black src/ tests/ --line-length 88
@@ -58,7 +59,7 @@ pyinstaller --name="2048Game" --windowed --onefile --clean src/main.py
 ### Running the Application
 ```bash
 # Using virtual environment (recommended)
-/c/Documents/Develop/venv/hswl312/Scripts/python.exe src/main.py
+python src/main.py
 
 # Run the game directly
 python src/main.py

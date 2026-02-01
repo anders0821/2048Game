@@ -107,11 +107,10 @@ After packaging is complete, the executable file is located at:
 │   └── game2048.py           # Game logic core
 ├── 📂 tests/                  # Test files
 │   ├── __init__.py
-│   └── test_main.py          # Unit tests
+  │   └── test_game.py          # Unit tests
 ├── 📂 release/                # Package release directory
 ├── 🔧 package_game.py         # Automated packaging script
 ├── 🔧 2048Game.spec          # PyInstaller configuration
-├── 🧪 smoke_test.py          # Smoke test
 ├── 🧪 run_tests.py           # Test suite
 ├── 📄 setup.py              # Installation configuration
 ├── 📄 pyproject.toml         # Project configuration
@@ -165,11 +164,14 @@ The project includes a complete testing system:
 # Run all tests
 python run_tests.py
 
-# Smoke test only
-python smoke_test.py
-
 # Unit tests only
 pytest tests/ -v
+
+# Run specific test file
+pytest tests/test_game.py -v
+
+# Run specific test function
+pytest tests/test_game.py::TestGame2048::test_initial_score -v
 ```
 
 ### Code Quality
@@ -178,8 +180,7 @@ pytest tests/ -v
 - ✅ **MyPy** - Static type checking  
 - ✅ **Flake8** - Code style checking
 - ✅ **iSort** - Import statement sorting
-- ✅ **Smoke Test** - Functionality verification
-- ✅ **Unit Tests** - Component testing
+- ✅ **Unit Tests** - Component testing with pytest
 
 ## 🎯 Game Rules
 

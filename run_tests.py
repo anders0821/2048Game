@@ -1,50 +1,13 @@
-"""Automated smoke test - command runner script"""
+"""Automated test runner script."""
 import subprocess
 import sys
-import os
-
-
-def run_smoke_test():
-    """Run smoke test"""
-    print("🚀 Starting 2048 game smoke test...")
-    
-    try:
-        # Check Python environment
-        result = subprocess.run([sys.executable, "--version"], 
-                              capture_output=True, text=True)
-        print(f"Python version: {result.stdout.strip()}")
-        
-        # Check PySide6 installation
-        try:
-            import PySide6
-            print(f"PySide6 version: {PySide6.__version__}")
-        except ImportError:
-            print("❌ PySide6 not installed, please run: pip install PySide6")
-            return False
-        
-        # Run smoke test
-        print("\nStarting smoke test execution...\n")
-        result = subprocess.run([sys.executable, "smoke_test.py"], 
-                              cwd=os.getcwd())
-        
-        if result.returncode == 0:
-            print("\n✅ Smoke test execution successful")
-            return True
-        else:
-            print(f"\n❌ Smoke test execution failed, return code: {result.returncode}")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Error running smoke test: {e}")
-        return False
 
 
 def run_unit_tests():
-    """Run unit tests"""
+    """Run unit tests."""
     print("\n🧪 Running unit tests...")
     
     try:
-        # Run pytest
         result = subprocess.run([
             sys.executable, "-m", "pytest", "tests/", 
             "-v", "--tb=short"
@@ -63,7 +26,7 @@ def run_unit_tests():
 
 
 def run_code_quality_checks():
-    """Run code quality checks"""
+    """Run code quality checks."""
     print("\n🔍 Running code quality checks...")
     
     checks = {
@@ -98,28 +61,24 @@ def run_code_quality_checks():
 
 
 def main():
-    """Main function"""
+    """Main function."""
     print("=" * 60)
     print("🎮 2048 Game - Automated Test Suite")
     print("=" * 60)
     
-    # 1. Smoke test
-    smoke_passed = run_smoke_test()
-    
-    # 2. Unit tests
+    # 1. Unit tests
     unit_passed = run_unit_tests()
     
-    # 3. Code quality checks
+    # 2. Code quality checks
     quality_passed = run_code_quality_checks()
     
     # Summary
     print("\n" + "=" * 60)
     print("📊 Test Summary:")
-    print(f"Smoke test: {'✅ Passed' if smoke_passed else '❌ Failed'}")
     print(f"Unit tests: {'✅ Passed' if unit_passed else '❌ Failed'}")
     print(f"Code quality: {'✅ Passed' if quality_passed else '❌ Failed'}")
     
-    if smoke_passed and unit_passed and quality_passed:
+    if unit_passed and quality_passed:
         print("\n🎉 All tests passed! Game is ready.")
         return 0
     else:

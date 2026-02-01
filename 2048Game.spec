@@ -5,7 +5,7 @@ a = Analysis(
     ['src\\main.py'],
     pathex=['src'],
     binaries=[],
-    datas=[],
+    datas=[('assets', 'assets')],
     hiddenimports=['common', 'game2048', 'main_window', 'tile_widget', 'game_board_widget'],
     hookspath=[],
     hooksconfig={},

@@ -40,11 +40,21 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("2048 Game")
         self.setFixedSize(self.WINDOW_WIDTH, self.WINDOW_HEIGHT)
         
-        # Set window icon
-        icon = QIcon("assets/icon.ico")
+        # Set window icon - handle both development and PyInstaller paths
+        import sys
+        if hasattr(sys, '_MEIPASS'):
+            # Running in PyInstaller bundle
+            icon_path = sys._MEIPASS + "/assets/icon.ico"
+            icon_path_fallback = sys._MEIPASS + "/assets/icon_256.png"
+        else:
+            # Running in normal Python environment
+            icon_path = "assets/icon.ico"
+            icon_path_fallback = "assets/icon_256.png"
+        
+        icon = QIcon(icon_path)
         if icon.isNull():
             # Fallback to PNG if ICO fails
-            icon = QIcon("assets/icon_256.png")
+            icon = QIcon(icon_path_fallback)
         self.setWindowIcon(icon)
 
         # Central widget

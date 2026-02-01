@@ -39,6 +39,13 @@ class MainWindow(QMainWindow):
         """Setup the main window UI components."""
         self.setWindowTitle("2048 Game")
         self.setFixedSize(self.WINDOW_WIDTH, self.WINDOW_HEIGHT)
+        
+        # Set window icon
+        icon = QIcon("assets/icon.ico")
+        if icon.isNull():
+            # Fallback to PNG if ICO fails
+            icon = QIcon("assets/icon_256.png")
+        self.setWindowIcon(icon)
 
         # Central widget
         central_widget = QWidget()

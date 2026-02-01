@@ -32,7 +32,9 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import (
     QFont,
+    QIcon,
     QKeyEvent,
+    QPixmap,
 )
 
 # Type hints
@@ -77,7 +79,9 @@ __all__ = [
     'QTimer',
     # PySide6 - QtGui
     'QFont',
+    'QIcon',
     'QKeyEvent',
+    'QPixmap',
     # Typing
     'List',
     'Tuple',

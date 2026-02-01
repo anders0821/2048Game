@@ -114,7 +114,6 @@ After packaging is complete, the executable file is located at:
 ├── 📂 tests/                  # Test files
 │   ├── __init__.py
 │   └── test_game.py          # Unit tests
-├── 📂 release/                # Package release directory
 ├── 🔧 package_game.py         # Automated packaging script
 ├── 🔧 2048Game.spec          # PyInstaller configuration
 ├── 🧪 run_tests.py           # Test suite
@@ -252,10 +251,6 @@ After packaging is complete:
 ```
 📁 dist/
 └── 📄 2048Game.exe           # Main executable file
-
-📁 release/
-├── 📄 2048Game.exe          # Portable version
-└── 📄 README.txt            # Usage instructions
 ```
 
 ## 🤝 Contributing Guidelines

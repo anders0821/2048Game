@@ -61,6 +61,23 @@ pip install -e .
 python -m src.main
 ```
 
+### 打包为可执行文件
+
+```bash
+# 自动化打包（推荐）
+python package_game.py
+
+# 或使用 PyInstaller 直接打包
+pyinstaller 2048Game.spec
+
+# 简单打包
+pyinstaller --name="2048Game" --windowed --onefile src/main.py
+```
+
+打包完成后，可执行文件位于：
+- `dist/2048Game.exe` - 单独的可执行文件
+- `release/` - 包含说明文档的便携版本
+
 ### 游戏控制
 
 - **方向键** (↑ ↓ ← →): 移动数字块

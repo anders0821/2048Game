@@ -12,7 +12,7 @@ A 2048 puzzle game implemented with PySide6, featuring smooth animations and bea
 ### 🎮 Game Features
 - Classic 2048 game rules
 - Keyboard arrow key controls (↑↓←→)
-- Real-time score tracking
+- Real-time score tracking with best score persistence
 - Game win/loss detection
 - New game reset functionality
 
@@ -27,8 +27,9 @@ A 2048 puzzle game implemented with PySide6, featuring smooth animations and bea
 
 ### 🛠️ Technical Features
 - Object-oriented architecture design
-- Complete animation framework
-- Modular code structure
+- Complete animation framework with smooth tile merge effects
+- Centralized import management via common.py
+- Modular code structure with reusable UI components
 - Comprehensive error handling
 
 ## Installation
@@ -44,7 +45,10 @@ A 2048 puzzle game implemented with PySide6, featuring smooth animations and bea
 2. Install dependencies:
 
 ```bash
-# Install application dependencies
+# Install runtime dependencies only (for deployment)
+pip install -r requirements.txt
+
+# Or install development dependencies (includes testing tools)
 pip install -r requirements-dev.txt
 
 # Or install PySide6 directly
@@ -104,18 +108,22 @@ After packaging is complete, the executable file is located at:
 │   ├── __init__.py            # Package initialization
 │   ├── main.py               # Main program entry
 │   ├── main_window.py        # Main window and UI components
-│   └── game2048.py           # Game logic core
+│   ├── game2048.py           # Game logic core
+│   ├── common.py             # Common imports
+│   ├── tile_widget.py        # Tile UI component
+│   └── game_board_widget.py  # Game board widget
 ├── 📂 tests/                  # Test files
 │   ├── __init__.py
-  │   └── test_game.py          # Unit tests
+│   └── test_game.py          # Unit tests
 ├── 📂 release/                # Package release directory
 ├── 🔧 package_game.py         # Automated packaging script
 ├── 🔧 2048Game.spec          # PyInstaller configuration
 ├── 🧪 run_tests.py           # Test suite
 ├── 📄 setup.py              # Installation configuration
 ├── 📄 pyproject.toml         # Project configuration
-├── 📄 requirements-dev.txt  # Development dependencies
-└── 📖 README.md             # Project documentation
+├── 📄 requirements.txt       # Runtime dependencies
+├── 📄 requirements-dev.txt   # Development dependencies
+└── 📖 README.md              # Project documentation
 ```
 
 ## 🛠️ Development Guide

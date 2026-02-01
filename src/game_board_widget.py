@@ -1,7 +1,5 @@
 """Game board widget for the 2048 game."""
-from PySide6.QtWidgets import QFrame, QGridLayout, QWidget
-from PySide6.QtCore import Qt, QPoint, QTimer
-from typing import List, Optional, Tuple, Dict
+from common import *
 from game2048 import Game2048
 
 

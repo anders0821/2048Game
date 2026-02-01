@@ -1,8 +1,5 @@
 """Tile widget for the 2048 game."""
-from PySide6.QtWidgets import QLabel
-from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QRect, QPoint
-from PySide6.QtGui import QFont
-from typing import Optional, Tuple
+from common import *
 
 
 class TileWidget(QLabel):

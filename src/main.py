@@ -1,7 +1,5 @@
 """Main entry point for the 2048 game."""
-import sys
-from PySide6.QtWidgets import QApplication
-
+from common import *
 from main_window import MainWindow
 
 

@@ -1,19 +1,5 @@
 """Main window for the 2048 game."""
-from PySide6.QtWidgets import (
-    QWidget,
-    QApplication,
-    QMainWindow,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QPushButton,
-    QMessageBox,
-    QFrame,
-)
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QFont, QKeyEvent
-from typing import Optional, Dict
-
+from common import *
 from game2048 import Game2048
 from game_board_widget import GameBoardWidget
 

@@ -1,5 +1,5 @@
-import random
-from typing import List, Tuple, Optional
+"""2048 game logic implementation."""
+from common import *
 
 
 class Game2048:

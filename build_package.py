@@ -1,17 +1,17 @@
-# PyInstaller 打包配置
-# 安装依赖
+# PyInstaller packaging configuration
+# Install dependencies
 pip install pyinstaller
 
-# 打包命令
+# Packaging command
 pyinstaller --name="2048Game" --windowed --onefile --clean --paths=src --distpath=. src/main.py
 
-# 详细选项说明：
-# --name="2048Game"           # 生成的可执行文件名
-# --windowed                  # 无控制台窗口（GUI应用）
-# --onefile                   # 打包为单个可执行文件
-# --clean                     # 清理临时文件
-# --add-data="src"            # 可选：包含源码
-# --icon=icon.ico             # 可选：指定图标
+# Detailed option descriptions:
+# --name="2048Game"           # Generated executable filename
+# --windowed                  # No console window (GUI application)
+# --onefile                   # Package as single executable
+# --clean                     # Clean temporary files
+# --add-data="src"            # Optional: include source code
+# --icon=icon.ico             # Optional: specify icon
 
-# 开发模式打包（更快，包含调试信息）
+# Development mode packaging (faster, includes debug info)
 # pyinstaller --name="2048Game_Dev" --windowed --onedir --debug=all src/main.py

@@ -6,7 +6,7 @@
 
 **A beautiful 2048 puzzle game with smooth animations**
 
-[![Version](https://img.shields.io/badge/Version-0.1.0-blue.svg)](https://github.com/anders0821/2048Game)
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://github.com/anders0821/2048Game)
 [![Python](https://img.shields.io/badge/Python-3.12+-green.svg)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PySide6](https://img.shields.io/badge/PySide6-6.0+-blue.svg)](https://doc.qt.io/qtforpython/)

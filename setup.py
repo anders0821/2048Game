@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="2048-game",
-    version="0.1.0",
+    version="1.0.0",
     author="2048 Game Team",
     author_email="dev@2048game.local",
     description="A 2048 puzzle game implemented with PySide6 featuring smooth animations",

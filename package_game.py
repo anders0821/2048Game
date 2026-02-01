@@ -43,6 +43,7 @@ def build_package():
         "--onefile",
         "--clean",
         "--add-data=src;src",
+        "--distpath=.",
         "src/main.py"
     ]
     
@@ -160,19 +161,13 @@ def main():
         print("❌ 打包失败")
         return 1
     
-    # 创建便携版本
-    if not create_portable_package():
-        print("❌ 创建便携版本失败")
-        return 1
-    
     # 显示结果
-    exe_file = find_executable()
-    if exe_file:
+    exe_file = Path("2048Game.exe")
+    if exe_file.exists():
         exe_size = exe_file.stat().st_size / (1024 * 1024)  # MB
         print(f"\n📊 打包完成:")
-        print(f"   📁 可执行文件: {exe_file}")
+        print(f"   📁 可执行文件: {exe_file.absolute()}")
         print(f"   📏 文件大小: {exe_size:.1f} MB")
-        print(f"   📂 便携版本: {Path('release').absolute()}")
     
     print("\n🎉 打包完成！现在可以分发游戏了。")
     return 0

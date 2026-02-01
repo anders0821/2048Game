@@ -3,7 +3,7 @@
 pip install pyinstaller
 
 # 打包命令
-pyinstaller --name="2048Game" --windowed --onefile --clean src/main.py
+pyinstaller --name="2048Game" --windowed --onefile --clean --paths=src --distpath=. src/main.py
 
 # 详细选项说明：
 # --name="2048Game"           # 生成的可执行文件名

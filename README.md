@@ -92,7 +92,6 @@ pyinstaller --name="2048Game" --windowed --onefile src/main.py
 
 After packaging is complete, the executable file is located at:
 - `dist/2048Game.exe` - Standalone executable file
-- `release/` - Portable version with documentation
 
 ### Game Controls
 

@@ -199,27 +199,31 @@ class TestDirectionalMoves:
         """Test up movement."""
         game = Game2048()
         game.board = [
-            [0, 0, 0, 0],
+            [0, 2, 0, 0],
             [0, 2, 0, 0],
             [0, 0, 0, 0],
-            [0, 2, 0, 0]
+            [0, 0, 0, 0],
         ]
         game.move("up")
+        # Expect the merge to occur at the top row
         assert game.board[0][1] == 4
         assert game.board[1][1] == 0
+        assert game.get_score() == 4
 
     def test_move_down(self):
         """Test down movement."""
         game = Game2048()
         game.board = [
             [2, 0, 0, 0],
-            [0, 0, 0, 0],
             [2, 0, 0, 0],
-            [0, 0, 0, 0]
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
         ]
         game.move("down")
+        # Expect the merge to occur at the bottom row
         assert game.board[3][0] == 4
         assert game.board[2][0] == 0
+        assert game.get_score() == 4
 
     def test_move_no_change(self):
         """Test that invalid move returns False."""

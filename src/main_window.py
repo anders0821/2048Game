@@ -110,10 +110,10 @@ class MainWindow(QMainWindow):
     def keyPressEvent(self, event) -> None:
         """Handle keyboard input."""
         key_map = {
-            Qt.Key.Key_Left: "left",
-            Qt.Key.Key_Right: "right",
-            Qt.Key.Key_Up: "up",
-            Qt.Key.Key.Down: "down"
+            Qt.Key_Left: "left",
+            Qt.Key_Right: "right",
+            Qt.Key_Up: "up",
+            Qt.Key_Down: "down"
         }
 
         direction = key_map.get(event.key())

@@ -38,13 +38,9 @@ def build_package():
     # 打包命令
     cmd = [
         sys.executable, "-m", "PyInstaller",
-        "--name=2048Game",
-        "--windowed",
-        "--onefile",
         "--clean",
-        "--add-data=src;src",
         "--distpath=.",
-        "src/main.py"
+        "2048Game.spec"
     ]
     
     print(f"🚀 执行命令: {' '.join(cmd)}")
@@ -126,7 +122,7 @@ def clean_build_files():
     """清理构建文件"""
     print("\n🧹 清理构建文件...")
     
-    dirs_to_clean = ["build", "dist", "2048Game.spec"]
+    dirs_to_clean = ["build", "dist"]
     for item in dirs_to_clean:
         path = Path(item)
         if path.exists():

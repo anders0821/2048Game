@@ -129,6 +129,11 @@ class GameBoardWidget(QFrame):
                 tile = self._tiles[row][col]
                 value = new_board[row][col]
 
+                # Ensure tile is at correct position before any animation
+                expected_pos = self._get_tile_position(row, col)
+                if tile.pos() != expected_pos:
+                    tile.move(expected_pos)
+
                 if is_merge:
                     tile.update_value(value, animate=True)
                 elif is_new:

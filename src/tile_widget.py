@@ -76,19 +76,14 @@ class TileWidget(QLabel):
     def _setup_animations(self) -> None:
         """Setup animation objects for movement and scaling."""
         # Movement animation
-        self.move_animation = QPropertyAnimation(self, b"geometry")
-        self.move_animation.setDuration(120)
-        self.move_animation.setEasingCurve(QEasingCurve.Type.OutQuad)
+        self._move_animation = QPropertyAnimation(self, b"geometry")
+        self._move_animation.setDuration(120)
+        self._move_animation.setEasingCurve(QEasingCurve.Type.OutQuad)
 
         # Scale animation for appearance
-        self.scale_animation = QPropertyAnimation(self, b"geometry")
-        self.scale_animation.setDuration(150)
-        self.scale_animation.setEasingCurve(QEasingCurve.Type.OutBack)
-
-        # Merge animation
-        self.merge_animation = QPropertyAnimation(self, b"geometry")
-        self.merge_animation.setDuration(200)
-        self.merge_animation.setEasingCurve(QEasingCurve.Type.OutElastic)
+        self._scale_animation = QPropertyAnimation(self, b"geometry")
+        self._scale_animation.setDuration(150)
+        self._scale_animation.setEasingCurve(QEasingCurve.Type.OutBack)
 
     def _get_font_size(self, value: int) -> int:
         """
@@ -142,44 +137,57 @@ class TileWidget(QLabel):
             small_size,
         )
 
-        self.scale_animation.stop()
-        self.scale_animation.setStartValue(start_geo)
-        self.scale_animation.setEndValue(current_geo)
-        self.scale_animation.start()
+        self._scale_animation.stop()
+        self._scale_animation.setStartValue(start_geo)
+        self._scale_animation.setEndValue(current_geo)
+        self._scale_animation.start()
 
     def _animate_merge(self) -> None:
-        """Animate merged tile with bounce effect."""
+        """Animate merged tile with bounce effect using sequential animation group."""
+        from PySide6.QtCore import QSequentialAnimationGroup
+
+        # Store original position and size
         current_geo = self.geometry()
-        center = current_geo.center()
+        original_pos = current_geo.topLeft()
         size = current_geo.width()
 
-        # Expand phase
+        # Calculate expand geometry (grow 15% from center)
         expand_size = int(size * 1.15)
+        offset = (expand_size - size) // 2
         expand_geo = QRect(
-            center.x() - expand_size // 2,
-            center.y() - expand_size // 2,
+            original_pos.x() - offset,
+            original_pos.y() - offset,
             expand_size,
             expand_size,
         )
+        final_geo = QRect(original_pos.x(), original_pos.y(), size, size)
 
-        self.merge_animation.stop()
-        self.merge_animation.setStartValue(current_geo)
-        self.merge_animation.setEndValue(expand_geo)
-        self.merge_animation.start()
-        self.merge_animation.finished.connect(
-            lambda: self._animate_merge_contract(expand_geo, current_geo)
-        )
+        # Create expand animation
+        expand_anim = QPropertyAnimation(self, b"geometry")
+        expand_anim.setDuration(120)
+        expand_anim.setEasingCurve(QEasingCurve.Type.OutQuad)
+        expand_anim.setStartValue(current_geo)
+        expand_anim.setEndValue(expand_geo)
 
-    def _animate_merge_contract(
-        self, expand_geo: QRect, final_geo: QRect
-    ) -> None:
-        """Complete merge animation by contracting back to normal size."""
-        contract_animation = QPropertyAnimation(self, b"geometry")
-        contract_animation.setDuration(150)
-        contract_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
-        contract_animation.setStartValue(expand_geo)
-        contract_animation.setEndValue(final_geo)
-        contract_animation.start()
+        # Create contract animation
+        contract_anim = QPropertyAnimation(self, b"geometry")
+        contract_anim.setDuration(150)
+        contract_anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        contract_anim.setStartValue(expand_geo)
+        contract_anim.setEndValue(final_geo)
+
+        # Use sequential group for expand then contract
+        self._merge_group = QSequentialAnimationGroup()
+        self._merge_group.addAnimation(expand_anim)
+        self._merge_group.addAnimation(contract_anim)
+        self._merge_group.finished.connect(self._on_merge_animation_finished)
+        self._merge_group.start()
+
+    def _on_merge_animation_finished(self) -> None:
+        """Called when merge animation completes to ensure correct position."""
+        # Force layout update to ensure tile is at correct grid position
+        if self.parent():
+            self.parent().update()
 
     def animate_move_to(self, target_pos: QPoint) -> None:
         """
@@ -196,10 +204,10 @@ class TileWidget(QLabel):
             current_geo.height(),
         )
 
-        self.move_animation.stop()
-        self.move_animation.setStartValue(current_geo)
-        self.move_animation.setEndValue(target_geo)
-        self.move_animation.start()
+        self._move_animation.stop()
+        self._move_animation.setStartValue(current_geo)
+        self._move_animation.setEndValue(target_geo)
+        self._move_animation.start()
 
     def _get_style(self, value: int) -> str:
         """

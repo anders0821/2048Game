@@ -26,6 +26,7 @@ setup(
     ],
     python_requires=">=3.12",
     install_requires=[
+        "PySide6>=6.0.0",
     ],
     extras_require={
         "dev": [

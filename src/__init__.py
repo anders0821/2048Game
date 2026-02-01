@@ -1,7 +1,7 @@
 """
-Your package name.
+2048 Game using PySide6.
 
-A brief description of your package.
+A classic 2048 puzzle game implementation using PySide6 GUI framework.
 """
 
 __version__ = "0.1.0"

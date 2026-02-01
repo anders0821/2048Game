@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QPalette, QColor
 from typing import Optional
 
-from .game2048 import Game2048
+from game2048 import Game2048
 
 
 class TileWidget(QLabel):
@@ -191,6 +191,9 @@ class MainWindow(QMainWindow):
                 background-color: #faf8ef;
             }
         """)
+        
+        # Ensure the window can receive keyboard focus
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
     
     def setup_connections(self) -> None:
         """Setup signal connections."""
@@ -232,3 +235,6 @@ class MainWindow(QMainWindow):
             moved = self.game.move(direction)
             if moved:
                 self.update_display()
+            event.accept()
+        else:
+            super().keyPressEvent(event)

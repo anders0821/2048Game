@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication
 
-from .main_window import MainWindow
+from main_window import MainWindow
 
 
 def main() -> None:
@@ -11,6 +11,8 @@ def main() -> None:
     # Create and show the main window
     window = MainWindow()
     window.show()
+    window.activateWindow()
+    window.raise_()
     
     # Run the application
     sys.exit(app.exec())

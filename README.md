@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/screenshot.png" alt="2048 Game Icon">
+<img src="assets/screenshot.png" alt="2048 Game Screenshot" width="256">
 
 # 🎮 2048 Game
 
